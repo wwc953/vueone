@@ -26,6 +26,8 @@ new Vue({
 var baseWebsocketUrl = "";
 if (process.env.NODE_ENV == 'development') {
   baseWebsocketUrl = 'ws://127.0.0.1:8000/vueboot/websocket/';
+  // 分布式 网关接口
+  // baseWebsocketUrl = 'ws://127.0.0.1:7070/app-websocket/websocket/';
 } else if (process.env.NODE_ENV == 'production') {
   baseWebsocketUrl = 'ws://127.0.0.1:9000/vueboot/websocket/';
 }
@@ -77,12 +79,12 @@ wbsocket.onopen = function () {
 };
 // 监听socket消息接收
 wbsocket.onmessage = function (msg) {
-  // console.log("接受到的数据", msg);
+  console.log("接受到的数据", msg);
   // 转换为json对象
   const data = JSON.parse(msg.data);
   Notification({
     title: "新消息",
-    message: data.key,
+    message: data,
     type: "success",
     duration: 3000
   });
