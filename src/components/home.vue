@@ -52,7 +52,7 @@ import userList from "@/components/views/userList.vue";
 import helloword from "@/components/views/HelloWorld.vue";
 import bootconfig from "@/components/config/config.vue";
 import menuconfig from "@/components/config/menuConfig.vue";
-import websocket from "@/components/views/websocket.vue";
+import vwebsocket from "@/utils/websocket.js";
 
 export default {
   //组件
@@ -61,7 +61,6 @@ export default {
     helloword,
     bootconfig,
     menuconfig,
-    websocket,
   },
   data() {
     return {
@@ -73,6 +72,13 @@ export default {
   created() {
     // console.log(sessionStorage.getItem("urlListData"), "获取菜单");
     this.urlListData = JSON.parse(sessionStorage.getItem("urlListData"));
+  },
+  mounted() {
+    // //WebSocket url
+    var socketUrl =
+      process.env.baseWebsocketUrl +
+      JSON.parse(sessionStorage.getItem("userInfo")).id;
+    vwebsocket(socketUrl);
   },
   methods: {
     hangdleMenuClick(val) {
