@@ -52,7 +52,7 @@ import userList from "@/components/views/userList.vue";
 import helloword from "@/components/views/HelloWorld.vue";
 import bootconfig from "@/components/config/config.vue";
 import menuconfig from "@/components/config/menuConfig.vue";
-import vwebsocket from "@/utils/websocket.js";
+import vvsocket from "@/utils/websocket.js";
 
 export default {
   //组件
@@ -78,7 +78,7 @@ export default {
     var socketUrl =
       process.env.baseWebsocketUrl +
       JSON.parse(sessionStorage.getItem("userInfo")).id;
-    vwebsocket(socketUrl);
+    vvsocket.createWebcosket(socketUrl);
   },
   methods: {
     hangdleMenuClick(val) {

@@ -1,11 +1,13 @@
 import { Notification } from 'element-ui';
 
-function createWebcosket(socketUrl) {
+const vwebsocket = {}
+vwebsocket.createWebcosket = (socketUrl) => {
     var wbsocket = new WebSocket(socketUrl);
+
     //心跳检测
     var heartCheck = {
         failCount: 0,
-        timeout: 5000,        //15秒发一次心跳
+        timeout: 15000,        //15秒发一次心跳
         timeoutObj: null,
         serverTimeoutObj: null,
         reset: function () {
@@ -23,10 +25,10 @@ function createWebcosket(socketUrl) {
                     wbsocket.send("ping");
                 } else {
                     self.failCount++;
-                    console.log("失败次数", self.failCount)
+                    console.log("重试次数", self.failCount)
                 }
                 if (self.failCount >= 3) {
-                    console.log("重新创建连接,socketUrl:", socketUrl)
+                    // console.log("重新创建连接,socketUrl:", socketUrl)
                     wbsocket = new WebSocket(socketUrl);
                     // wbsocket.onopen()
                     wbsocketinit(wbsocket)
@@ -75,6 +77,8 @@ function createWebcosket(socketUrl) {
     }
 
     wbsocketinit(wbsocket);
+
+    return wbsocket
 }
 
-export default createWebcosket
+export default vwebsocket
