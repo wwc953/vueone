@@ -1,13 +1,21 @@
 import { Notification } from 'element-ui';
 
 const vwebsocket = {}
-vwebsocket.createWebcosket = (socketUrl) => {
+/**
+ * 
+ * @param {*} socketUrl websocket url
+ * @param {*} heartCheck 是否开启心跳检测
+ * @param {*} timeout 重试间隔 ms 默认15秒
+ * @param {*} failCount 重试次数
+ * @returns 
+ */
+vwebsocket.createWebcosket = (socketUrl, heartCheck, timeout, failCount) => {
     var wbsocket = new WebSocket(socketUrl);
 
     //心跳检测
-    var heartCheck = {
-        failCount: 0,
-        timeout: 15000,        //15秒发一次心跳
+    var heartCheckFun = {
+        fail: 0,
+        timeout: timeout ? timeout : 15000,  //15秒发一次心跳
         timeoutObj: null,
         serverTimeoutObj: null,
         reset: function () {
@@ -24,15 +32,15 @@ vwebsocket.createWebcosket = (socketUrl) => {
                 if (wbsocket.readyState == wbsocket.OPEN) {
                     wbsocket.send("ping");
                 } else {
-                    self.failCount++;
-                    console.log("重试次数", self.failCount)
+                    self.fail++;
+                    console.log("重试次数", self.fail)
                 }
-                if (self.failCount >= 3) {
+                if (self.fail >= (failCount ? failCount : 3)) {
                     // console.log("重新创建连接,socketUrl:", socketUrl)
                     wbsocket = new WebSocket(socketUrl);
                     // wbsocket.onopen()
                     wbsocketinit(wbsocket)
-                    self.failCount = 0;
+                    self.fail = 0;
                 }
                 // self.serverTimeoutObj = setTimeout(function () {//如果超过一定时间还没重置，说明后端主动断开了
                 //   wbsocket.close();     //如果onclose会执行reconnect，我们执行ws.close()就行了.如果直接执行reconnect 会触发onclose导致重连两次
@@ -45,8 +53,10 @@ vwebsocket.createWebcosket = (socketUrl) => {
     function wbsocketinit(wbsocket) {
         // 监听socket打开
         wbsocket.onopen = function () {
-            //心跳
-            heartCheck.reset().start();
+            if (heartCheck) {
+                //心跳检测
+                heartCheckFun.reset().start();
+            }
             console.log("浏览器WebSocket已打开");
         };
         // 监听socket消息接收
@@ -54,12 +64,23 @@ vwebsocket.createWebcosket = (socketUrl) => {
             console.log("接受到的数据", msg);
             // 转换为json对象
             const data = JSON.parse(msg.data);
-            Notification({
-                title: "新消息",
-                message: data,
-                type: "success",
-                duration: 3000
-            });
+            // if (data.type == '1') {
+            //     Notification({
+            //         title: "新xxx消息",
+            //         message: data,
+            //         type: "success",
+            //         duration: 3000
+            //     });
+            // } else {
+            //     Notification({
+            //         title: "新消息",
+            //         message: data,
+            //         type: "success",
+            //         duration: 3000
+            //     });
+            // }
+
+            shouwData(data)
         };
         // 监听socket错误
         wbsocket.onerror = function (e) {
@@ -81,4 +102,22 @@ vwebsocket.createWebcosket = (socketUrl) => {
     return wbsocket
 }
 
+
+function shouwData(data) {
+    if (data.type == '1') {
+        Notification({
+            title: "新xxx消息",
+            message: data,
+            type: "success",
+            duration: 3000
+        });
+    } else {
+        Notification({
+            title: "新消息",
+            message: data,
+            type: "success",
+            duration: 3000
+        });
+    }
+}
 export default vwebsocket
