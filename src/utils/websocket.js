@@ -63,23 +63,13 @@ vwebsocket.createWebcosket = (socketUrl, heartCheck, timeout, failCount) => {
         wbsocket.onmessage = function (msg) {
             console.log("接受到的数据", msg);
             // 转换为json对象
-            const data = JSON.parse(msg.data);
-            // if (data.type == '1') {
-            //     Notification({
-            //         title: "新xxx消息",
-            //         message: data,
-            //         type: "success",
-            //         duration: 3000
-            //     });
-            // } else {
-            //     Notification({
-            //         title: "新消息",
-            //         message: data,
-            //         type: "success",
-            //         duration: 3000
-            //     });
-            // }
-
+            var data = {}
+            try {
+                data = JSON.parse(msg.data);
+            } catch (e) {
+                data.type = 1;
+                data.value = msg.data;
+            }
             shouwData(data)
         };
         // 监听socket错误
@@ -107,7 +97,7 @@ function shouwData(data) {
     if (data.type == '1') {
         Notification({
             title: "新xxx消息",
-            message: data,
+            message: data.value,
             type: "success",
             duration: 3000
         });

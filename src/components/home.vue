@@ -78,7 +78,7 @@ export default {
     var socketUrl =
       process.env.baseWebsocketUrl +
       JSON.parse(sessionStorage.getItem("userInfo")).id;
-    vvsocket.createWebcosket(socketUrl, true, 5000);
+    vvsocket.createWebcosket(socketUrl, true);
   },
   methods: {
     hangdleMenuClick(val) {
