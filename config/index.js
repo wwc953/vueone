@@ -58,7 +58,6 @@ module.exports = {
     productionGzip: false,
     productionGzipExtensions: ['js', 'css'],
     // 12312321
-    //ceshi 222
     bundleAnalyzerReport: process.env.npm_config_report
   }
 }
